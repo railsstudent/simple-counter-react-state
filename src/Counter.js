@@ -16,6 +16,10 @@ const storeStateToLocalStorage = (state) => {
   console.log(localStorage);
 }
 
+const updateDocumentTitle = (state) => {
+  document.title = `count: ${state.count}`
+}
+
 class Counter extends Component {
   constructor(props) {
     super(props)
@@ -36,7 +40,10 @@ class Counter extends Component {
       return {
         count: state.count + step
       }
-    }, () => storeStateToLocalStorage(this.state))
+    }, () => { 
+      storeStateToLocalStorage(this.state);
+      updateDocumentTitle(this.state);
+    })
   }
 
   decrement() {
@@ -44,13 +51,18 @@ class Counter extends Component {
       return { 
         count: state.count - props.step 
       }
-    }, () => storeStateToLocalStorage(this.state))
+    }, () => { 
+      storeStateToLocalStorage(this.state);
+      updateDocumentTitle(this.state);
+    })
   }
 
   reset() {
     this.setState(() => ({ count: 0 }), 
-      () => storeStateToLocalStorage({ count: 0 })
-    )
+      () => { 
+        storeStateToLocalStorage({ count: 0 });
+        updateDocumentTitle(this.state);
+      })
   }
 
   render() {
