@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
 
-const increment = (state, props) => { 
-  const { max, step } = props
-  if (state.count >= max) {
-    return
+const getStateFromLocalStorage = () => {
+  const storage = localStorage.getItem('counterState');
+  console.log(storage);
+  if (storage) {
+    const value = JSON.parse(storage);
+    console.log('value', value);
+    return value;
   }
-  return {
-    count: state.count + step
-  }
+  return { count: 0 };
+};
+
+const storeStateToLocalStorage = (state) => {
+  localStorage.setItem('counterState', JSON.stringify(state));
+  console.log(localStorage);
 }
 
 class Counter extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      count: 0
-    }
+    this.state = getStateFromLocalStorage();
 
     this.increment = this.increment.bind(this)
     this.decrement = this.decrement.bind(this)
@@ -24,19 +28,34 @@ class Counter extends Component {
 
   increment() {
     // this.setState({ count: this.state.count + 1 })
-    this.setState(increment)
+    this.setState((state, props) => { 
+      const { max, step } = props
+      if (state.count >= max) {
+        return
+      }
+      return {
+        count: state.count + step
+      }
+    }, () => storeStateToLocalStorage(this.state))
   }
 
   decrement() {
-    this.setState({ count: this.state.count - 1 })
+    this.setState((state, props) => { 
+      return { 
+        count: state.count - props.step 
+      }
+    }, () => storeStateToLocalStorage(this.state))
   }
 
   reset() {
-    this.setState({ count: 0 })
+    this.setState(() => ({ count: 0 }), 
+      () => storeStateToLocalStorage({ count: 0 })
+    )
   }
 
   render() {
-    const { count } = this.state
+    const { count } = this.state;
+    console.log('count', count);
     return (
       <div className="Counter">
         <p className="count">{ count }</p>
