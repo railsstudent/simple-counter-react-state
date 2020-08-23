@@ -13,7 +13,7 @@ const Application = () => {
         <Counter max={20} step={2} />
       </section>
       <section className="Counters">
-        <CountHook />
+        <CountHook max={20} step={2} />
       </section>
     </main>
   );
